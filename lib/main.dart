@@ -12,11 +12,43 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Finance App",
+      theme: ThemeData(
+        primarySwatch: Colors.cyan,
+        accentColor: Colors.amber,
+        fontFamily: "Quicksand",
+        textTheme: ThemeData.light().textTheme.copyWith(
+              titleLarge: TextStyle(
+                fontFamily: "OpenSans",
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              titleMedium: TextStyle(
+                fontFamily: "OpenSans",
+                fontSize: 20,
+              ),
+              titleSmall: TextStyle(
+                fontFamily: "OpenSans",
+                fontSize: 15,
+                // color: Theme.of(context).primaryColor,
+                color: Colors.grey,
+              ),
+            ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: TextStyle(
+            fontFamily: "OpenSans",
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       home: _MyHomePage(),
     );
   }
 }
 
+// accentColor:対応方法
+// https://docs.flutter.dev/release/breaking-changes/theme-data-accent-properties
 class _MyHomePage extends StatefulWidget {
   @override
   State<_MyHomePage> createState() => _MyHomePageState();
@@ -79,7 +111,10 @@ class _MyHomePageState extends State<_MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Finance App"),
+        centerTitle: false,
+        title: Text(
+          "Finance App",
+        ),
         actions: [
           IconButton(
             onPressed: () => _startAddNewtransaction(context),

@@ -1,16 +1,17 @@
 # finance_app
 
+---
 A new Flutter project.
 
-## Getting Started
+![Flutter](android/app/src/main/res/mipmap-hdpi/ic_launcher.png)
 
-This project is a starting point for a Flutter application.
+## Use
+---
+### init
+![初期画面](/assets/images/01Init.png)
 
-A few resources to get you started if this is your first Flutter project:
+### input
+![入力画面](/assets/images/02Input.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### output
+![出力画面](/assets/images/03Output.png)
