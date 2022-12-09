@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
+import './widgets/chart.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(const MyApp());
 }
 
@@ -14,33 +21,49 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Finance App",
       theme: ThemeData(
-        primarySwatch: Colors.cyan,
-        accentColor: Colors.amber,
         fontFamily: "Quicksand",
+        // errorColor: Colors.red,
         textTheme: ThemeData.light().textTheme.copyWith(
-              titleLarge: TextStyle(
+              titleLarge: const TextStyle(
                 fontFamily: "OpenSans",
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
-              titleMedium: TextStyle(
+              titleMedium: const TextStyle(
                 fontFamily: "OpenSans",
                 fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              titleSmall: TextStyle(
+              titleSmall: const TextStyle(
                 fontFamily: "OpenSans",
                 fontSize: 15,
                 // color: Theme.of(context).primaryColor,
                 color: Colors.grey,
               ),
+              bodyLarge: const TextStyle(
+                fontFamily: "OpenSans",
+                color: Colors.purple,
+                fontWeight: FontWeight.bold,
+              ),
+              bodySmall: const TextStyle(
+                fontFamily: "OpenSans",
+                color: Colors.purple,
+              ),
             ),
-        appBarTheme: AppBarTheme(
+        // elevatedButtonTheme: ElevatedButtonThemeData(
+        //   style: ButtonStyle(
+        //     backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+        //   ),
+        // ),
+        appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
             fontFamily: "OpenSans",
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.cyan)
+            .copyWith(secondary: Colors.amber),
       ),
       home: _MyHomePage(),
     );
@@ -58,39 +81,59 @@ class _MyHomePageState extends State<_MyHomePage> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
 
-  final List<Transaction> _userTransaction = [
-    Transaction(
-      id: "t1",
-      title: "New Shoes",
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "t2",
-      title: "Bread",
-      amount: 8.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "t3",
-      title: "New PC",
-      amount: 1499.99,
-      date: DateTime.now(),
-    ),
+  final List<Transaction> _userTransactions = [
+    // Transaction(
+    //   id: "t1",
+    //   title: "New Shoes",
+    //   amount: 3999,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t2",
+    //   title: "Bread",
+    //   amount: 299,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t3",
+    //   title: "New PC",
+    //   amount: 150000,
+    //   date: DateTime.now(),
+    // ),
   ];
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where(
+      (tx) {
+        return tx.date.isAfter(
+          DateTime.now().subtract(
+            Duration(days: 7),
+          ),
+        );
+      },
+    ).toList();
+  }
+
+  void _addNewTransaction(String txTitle, double txAmount, DateTime date) {
     final newTx = Transaction(
       id: DateTime.now().toString(),
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: date,
     );
     //更新するsetState
     setState(() {
-      _userTransaction.add(newTx);
+      _userTransactions.add(newTx);
       // スプレッド演算子で展開せずにポインタを受け継いだ状態で_userTransaction内に入れる｡
       // _userTransaction = [..._userTransaction, newTx];
+    });
+  }
+
+  void _removeTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) {
+        return tx.id == id;
+      });
     });
   }
 
@@ -100,54 +143,75 @@ class _MyHomePageState extends State<_MyHomePage> {
       builder: (_) {
         return GestureDetector(
           onTap: () {},
-          child: NewTransaction(addTx: _addNewTransaction),
           behavior: HitTestBehavior.opaque,
+          child: NewTransaction(addTx: _addNewTransaction),
         );
       },
     );
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(
-          "Finance App",
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => _startAddNewtransaction(context),
-            icon: Icon(Icons.add),
-          ),
-        ],
+    final appBar = AppBar(
+      centerTitle: false,
+      title: const Text(
+        "Finance App",
       ),
+      actions: [
+        IconButton(
+          onPressed: () => _startAddNewtransaction(context),
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              child: Card(
-                color: Colors.blue,
-                elevation: 5,
-                child: Container(
-                  width: double.infinity,
-                  child: Text("Chart!"),
-                ),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Chart!"),
+                Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    }),
+              ],
             ),
-            TransactionList(transactions: _userTransaction),
-            Card(
-              color: Colors.red,
-              child: Text("List Of Tx"),
-            ),
+            _showChart == true
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child: Chart(
+                      recentTransactions: _recentTransactions,
+                    ),
+                  )
+                : Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child: TransactionList(
+                      transactions: _userTransactions,
+                      removeTransactions: _removeTransaction,
+                    ),
+                  ),
           ],
         ),
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _startAddNewtransaction(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
