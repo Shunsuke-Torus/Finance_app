@@ -5,13 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class Chart extends StatelessWidget {
-  var locale = initializeDateFormatting('ja');
+  final locale = initializeDateFormatting('ja');
+
   final List<Transaction> recentTransactions;
 
   Chart({required this.recentTransactions});
-  // Chart({required this.recentTransactions}) {
-  //   print("Constructor Chart");
-  // }
 
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(
@@ -51,8 +49,6 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("build() ChartBar");
-
     return Container(
       padding: const EdgeInsets.all(10),
       child: Card(

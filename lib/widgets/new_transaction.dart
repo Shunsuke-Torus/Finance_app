@@ -1,12 +1,9 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import './adaptive_Elevated_button.dart';
 
 class NewTransaction extends StatefulWidget {
-  NewTransaction({required this.addTx});
+  const NewTransaction({required this.addTx});
   final Function addTx;
 
   @override

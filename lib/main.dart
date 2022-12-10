@@ -81,6 +81,7 @@ class _MyHomePage extends StatefulWidget {
   State<_MyHomePage> createState() => _MyHomePageState();
 }
 
+// class _MyHomePageState extends State<_MyHomePage> with WidgetsBindingObserver {
 class _MyHomePageState extends State<_MyHomePage> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
@@ -242,6 +243,26 @@ class _MyHomePageState extends State<_MyHomePage> {
   }
 
   bool _showChart = false;
+
+  // @override
+  // void initState() {
+  //   // this このクラス自信に対してライフサイクルの状態が変化するたびに
+  //   // didChangeAppLifeCycleStateメソッドを呼び出せ
+  //   WidgetsBinding.instance.addObserver(this);
+  //   super.initState();
+  // }
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   print(state);
+  //   super.didChangeAppLifecycleState(state);
+  // }
+
+  // @override
+  // void dispose() {
+  //   WidgetsBinding.instance.removeObserver(this);
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
