@@ -18,7 +18,7 @@ class TransactionList extends StatelessWidget {
                 return Column(
                   children: [
                     Container(
-                      height: constraints.maxHeight * 0.05,
+                      height: constraints.maxHeight * 0.15,
                       child: Text(
                         "No transactions added yet!",
                         style: Theme.of(context).textTheme.titleLarge,
@@ -74,12 +74,26 @@ class TransactionList extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     // trailingウィジェットによってListTileの末尾に要素を追加しゴミ箱アイコン・ボタンを配置可能
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () =>
-                          removeTransactions(transactions[index].id),
-                      color: Theme.of(context).errorColor,
-                    ),
+                    trailing: MediaQuery.of(context).size.width > 460
+                        ? ElevatedButton.icon(
+                            onPressed: () =>
+                                removeTransactions(transactions[index].id),
+                            icon: Icon(Icons.delete),
+                            label: Text("Delete"),
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all(
+                                  Theme.of(context).errorColor),
+                              backgroundColor: MaterialStateProperty.all(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () =>
+                                removeTransactions(transactions[index].id),
+                            color: Theme.of(context).errorColor,
+                          ),
                   ),
                 );
               }),
