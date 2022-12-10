@@ -2,8 +2,10 @@ import 'package:finance_app/models/transaction.dart';
 import 'package:finance_app/widgets/chart_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class Chart extends StatelessWidget {
+  var locale = initializeDateFormatting('ja');
   final List<Transaction> recentTransactions;
 
   Chart({required this.recentTransactions});
