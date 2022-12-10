@@ -154,19 +154,67 @@ class _MyHomePageState extends State<_MyHomePage> {
     );
   }
 
-  bool _showChart = false;
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    PreferredSizeWidget appBar,
+    Widget txListWidget,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Show Chart!",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Switch.adaptive(
+            activeColor: Theme.of(context).colorScheme.primary,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(
+                recentTransactions: _recentTransactions,
+              ),
+            )
+          : txListWidget
+    ];
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    // 一度取得し1つのオブジェクトに保存することでビルドウィジェット全体で再利用する
-    // ビルドメソッド開始時に前もって取得することで新しい変数が早く効率よく作成される
-    final mediaQuery = MediaQuery.of(context);
+  List<Widget> _buildPortraitContent(
+    MediaQueryData mediaQuery,
+    PreferredSizeWidget appBar,
+    Widget txListWidget,
+  ) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(
+          recentTransactions: _recentTransactions,
+        ),
+      ),
+      txListWidget
+    ];
+  }
 
-    // 縦横判定
-    final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar = Platform.isIOS
+  PreferredSizeWidget _ios_material_judge() {
+    return Platform.isIOS
         ? CupertinoNavigationBar(
-            middle: Text(
+            middle: const Text(
               "Finance App",
             ),
             trailing: Row(
@@ -181,7 +229,7 @@ class _MyHomePageState extends State<_MyHomePage> {
           )
         : AppBar(
             centerTitle: false,
-            title: Text(
+            title: const Text(
               "Finance App",
             ),
             actions: [
@@ -191,6 +239,19 @@ class _MyHomePageState extends State<_MyHomePage> {
               ),
             ],
           ) as PreferredSizeWidget;
+  }
+
+  bool _showChart = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // 一度取得し1つのオブジェクトに保存することでビルドウィジェット全体で再利用する
+    // ビルドメソッド開始時に前もって取得することで新しい変数が早く効率よく作成される
+    final mediaQuery = MediaQuery.of(context);
+
+    // 縦横判定
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar = _ios_material_judge();
     final txListWidget = Container(
       height: (mediaQuery.size.height -
               appBar.preferredSize.height -
@@ -201,54 +262,26 @@ class _MyHomePageState extends State<_MyHomePage> {
         removeTransactions: _removeTransaction,
       ),
     );
-    // print(appBar.preferredSize.height); flutter:44.0
     final pageBody = SafeArea(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Show Chart!",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  ),
-                ],
+              ..._buildLandscapeContent(
+                mediaQuery,
+                appBar,
+                txListWidget,
               ),
             if (!isLandscape)
-              Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(
-                  recentTransactions: _recentTransactions,
-                ),
+              // buildメソッドは単一のウィジェットでなくリストとして返却する
+              // ウィジェットのリストに追加することではない
+              // Flutterの望み = 1つのウィジェット =>スプレッド演算子で新しく1つに作成する
+              ..._buildPortraitContent(
+                mediaQuery,
+                appBar,
+                txListWidget,
               ),
-            if (!isLandscape) txListWidget,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(
-                        recentTransactions: _recentTransactions,
-                      ),
-                    )
-                  : txListWidget
           ],
         ),
       ),

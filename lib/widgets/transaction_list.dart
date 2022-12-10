@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/transaction.dart';
+import './transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -41,61 +42,9 @@ class TransactionList extends StatelessWidget {
           // ListViewは高さが無限にあるから親で指定する必要がある｡
           : ListView.builder(
               itemBuilder: ((context, index) {
-                return Card(
-                  // 全てのカードに5の高さを追加
-                  elevation: 5,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 5,
-                  ),
-                  child: ListTile(
-                    leading: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(15),
-                          right: Radius.circular(15),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: FittedBox(
-                          child: Text(
-                              "¥${NumberFormat("#,###", "ja_JP").format(transactions[index].amount)}"),
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      transactions[index].title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMMd().format(transactions[index].date),
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    // trailingウィジェットによってListTileの末尾に要素を追加しゴミ箱アイコン・ボタンを配置可能
-                    trailing: MediaQuery.of(context).size.width > 460
-                        ? ElevatedButton.icon(
-                            onPressed: () =>
-                                removeTransactions(transactions[index].id),
-                            icon: Icon(Icons.delete),
-                            label: Text("Delete"),
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all(
-                                  Theme.of(context).errorColor),
-                              backgroundColor: MaterialStateProperty.all(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () =>
-                                removeTransactions(transactions[index].id),
-                            color: Theme.of(context).errorColor,
-                          ),
-                  ),
-                );
+                return TransactionItem(
+                    transaction: transactions[index],
+                    removeTransactions: removeTransactions);
               }),
               // itemBuilder: (ctx, index) {
               //   return Card(
